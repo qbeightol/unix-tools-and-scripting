@@ -1,0 +1,1 @@
+The beginnings of a Rack for #rstats are up. https://github.com/jeffreyhorner/rRack (warning! you need a dev version of R).

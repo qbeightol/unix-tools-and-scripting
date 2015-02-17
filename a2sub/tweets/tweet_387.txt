@@ -1,0 +1,1 @@
+@dasme Carefull with RC5 of SMF. We had a bunch of posts dissapear with RC5 and are in the process of reverting to V1. :(

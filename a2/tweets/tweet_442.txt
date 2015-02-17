@@ -1,0 +1,1 @@
+@XboxSupport it happens in party chat when not in a game, private chat, gamechat, and party chat when in a game

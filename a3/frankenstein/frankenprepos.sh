@@ -1,12 +1,12 @@
 #! /bin/bash
 
-# finds the 10 most common words in letter 3 of Frankenstein (ignores 
-# punctuation, and capitilization) 
-cat frankenstein.txt | tr '[A-Z]\n' '[a-z] ' | tr -d '[:punct:]' | sed 's/ \+/\n/g' | sort > words.txt
+cat frankenstein.txt | tr '[A-Z]\n' '[a-z] ' | tr -d '[:punct:]' > pass1.txt
+sed 's/ \+/\n/g' pass1.txt > pass2.txt 
+grep -F -v -f prepositions.txt pass2.txt > nopreps.txt
+sort nopreps.txt | uniq -c | sort -rn | head -100 > frankenprepos.txt
 
-uniq -c  prepositions.txt > counted_preps.txt
+# clean up 
+rm pass1.txt
+rm pass2.txt
+rm nopreps.txt
 
-sed -r 's/[[:space:]]+([[:digit:]]+) /\1\t/' counted_preps.txt > counted_preps2.txt
-
-
-join -1 2 -2 1 -a 1 words.txt prepositions.txt > table.txt

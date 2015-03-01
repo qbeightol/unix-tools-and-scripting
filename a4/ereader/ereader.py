@@ -34,8 +34,6 @@ def back_line(file):
 # moves back [n] lines in the text file
 def back_lines(file, n):
     for i in range(0, n, 1):
-        print i
-        print file.tell()
         back_line(file)
 
 # moves forward [n] lines in [file]
@@ -46,9 +44,14 @@ def fwd_lines(file, n):
 # prints the next [n] lines in [file]
 def print_lines(file, n):
     for i in range(0, n, 1):
-        print i,
         print file.readline(),
-    print "\n",
+    # print "\n",
+
+# prints ======= ... for 80 chars
+def print_sep():
+    for i in range(0, 80, 1):
+        sys.stdout.write("=")
+    
 
 # writes [dict] as csv file stored at [loc]
 def write_dict(dict, loc):
@@ -88,8 +91,6 @@ for kv in iter(rc_reader):
 
 rc_file.close()
 
-print progress_dict
-
 # lookup our progress in the text file #####################################
 
 text = open(text_path, "r") 
@@ -99,59 +100,36 @@ if not hash in progress_dict:
     progress_dict[hash] = 0
     write_dict(progress_dict, rc_loc)
 
-print progress_dict
 loc = int(progress_dict[hash]) 
-print loc
-print text.tell()
+
+text.read()
+max_loc = text.tell()
 text.seek(0, 0)
-print text.tell()
 fwd_lines(text, loc)
-print text.tell()
+
+
 
 # display loop #############################################################
 
-
-
 while True:
+    loc_before_printing = text.tell()
+    os.system("clear")
+    print_lines(text, lines_per_page)
+    print_sep()
     command = raw_input(":")
     if   command == "n":
-        print lines_per_page
-        print text.tell()
-        print_lines(text, lines_per_page)
-        progress_dict[hash] = int(progress_dict[hash]) + 40
-        print "writing dictionary"
-        write_dict(progress_dict, rc_loc)
-        print "finished writing"
+        if text.tell() == max_loc:
+            back_lines(text, lines_per_page)
+        elif loc_before_printing != text.tell():
+            progress_dict[hash] = int(progress_dict[hash]) + lines_per_page
+            write_dict(progress_dict, rc_loc)
     elif command == "p":
-        print int(progress_dict[hash]) - 40
-        print 2 * lines_per_page
         back_lines(text, 2 * lines_per_page)
-        print_lines(text, lines_per_page)
-        progress_dict[hash] = int(progress_dict[hash]) - 40
-        print "writing dictionary"
-        write_dict(progress_dict, rc_loc)
-        print "finished writing"
+        if loc_before_printing != text.tell():
+            progress_dict[hash] = int(progress_dict[hash]) - lines_per_page
+            write_dict(progress_dict, rc_loc)
     elif command == "q":
         sys.exit()
     else:
         print "invalid command"
 
-
-# need to parse command line arguments
-# safe to assume that "-n" comes first?
-
-# once I have a file, I'll need to hash it, and look up its page # in the
-# reader_rc file
-
-# I'll need to update the reader_rc file (either by changing the bindings
-# or by adding new entries)
-
-# I'll also need to create a file object for the input file (and based off 
-# reader_rc, I might need to skip ahead to a particular line)
-
-# I'll need to read off a specified #of lines
-
-# I'll need to be able to move backwards/forwards and respond to key strokes
-
-
-# 

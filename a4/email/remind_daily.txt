@@ -1,0 +1,1 @@
+30 6 * * 1-5 ./act_reminder.sh

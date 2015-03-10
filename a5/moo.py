@@ -58,6 +58,7 @@ class BCHandler(SocketServer.BaseRequestHandler):
             received_opponent_guess = True
             if input_string == secret:
                 my_socket.sendto("WIN", opponent_address)
+                print "opponent won :("
                 raise WinException
             else:
                 bulls = 0
@@ -71,6 +72,8 @@ class BCHandler(SocketServer.BaseRequestHandler):
         elif re.match(".B.C", input_string) and len(input_string) == 4:
             global received_bc_response
             received_bc_response = True
+            global guess_counter
+            guess_counter += 1
             print "opponent's response: " + input_string
         else:
             print "received unrecognized input: " + input_sting
@@ -111,21 +114,23 @@ print "my guess: " + valid_secrets[0]
 
 # play the game
 while True:
-    print received_bc_response, received_opponent_guess, starting_up
-    if (received_bc_response or received_opponent_guess) and starting_up:
+    # print received_bc_response, received_opponent_guess, starting_up
+    if received_opponent_guess and starting_up:
         my_guess = valid_secrets[guess_counter]
+        print "opponent didn't receive first guess; resending"
         print "my guess: " + my_guess
         my_socket.sendto(my_guess, opponent_address)
         received_bc_response = False
         received_opponent_guess = False
-        guess_counter += 1
+        # guess_counter += 1
+        starting_up = False
     elif received_bc_response and received_opponent_guess:
         my_guess = valid_secrets[guess_counter]
         print "my guess: " + my_guess
         my_socket.sendto(my_guess, opponent_address)
         received_bc_response = False
         received_opponent_guess = False
-        guess_counter += 1
+        # guess_counter += 1
     else:
         try:
             server.handle_request()

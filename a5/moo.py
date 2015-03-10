@@ -101,19 +101,29 @@ valid_secrets = [s for s in four_digit_nums if valid_secret(s)]
 guess_counter = 0
 received_bc_response = False
 received_opponent_guess = False
+starting_up = True
 # set-up communication between scripts:
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server = MyUDPServer(("localhost", my_port), BCHandler)
 my_socket.sendto(valid_secrets[0], opponent_address)
-server.serve_forever()
+print "my guess: " + valid_secrets[0]
+# server.serve_forever()
 
 # play the game
 while True:
-    if received_bc_reponse and received_opponent_guess:
+    print received_bc_response, received_opponent_guess, starting_up
+    if (received_bc_response or received_opponent_guess) and starting_up:
         my_guess = valid_secrets[guess_counter]
         print "my guess: " + my_guess
-        my_socket.sendto(my_guess, oppoenent_address)
-        received_bc_reponse = False
+        my_socket.sendto(my_guess, opponent_address)
+        received_bc_response = False
+        received_opponent_guess = False
+        guess_counter += 1
+    elif received_bc_response and received_opponent_guess:
+        my_guess = valid_secrets[guess_counter]
+        print "my guess: " + my_guess
+        my_socket.sendto(my_guess, opponent_address)
+        received_bc_response = False
         received_opponent_guess = False
         guess_counter += 1
     else:

@@ -18,7 +18,7 @@ def valid_secret(candidate):
     correct_size = len(candidate) == size
     only_digits  = all(char in digits for char in candidate)
     all_unique   = len(set(candidate)) == size
-    
+
     return correct_size and only_digits and all_unique
 
 # Classes ######################################################################
@@ -51,6 +51,7 @@ class BCHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         input_string = self.request[0]
         if input_string == "WIN":
+            print "opponent's response: " + input_string
             raise WinException
         elif valid_secret(input_string):
             global received_opponent_guess
@@ -70,6 +71,7 @@ class BCHandler(SocketServer.BaseRequestHandler):
         elif re.match(".B.C", input_string) and len(input_string) == 4:
             global received_bc_response
             received_bc_response = True
+            print "opponent's response: " + input_string
         else:
             print "received unrecognized input: " + input_sting
             raise WinException
@@ -109,9 +111,13 @@ server.serve_forever()
 while True:
     if received_bc_reponse and received_opponent_guess:
         my_guess = valid_secrets[guess_counter]
+        print "my guess: " + my_guess
         my_socket.sendto(my_guess, oppoenent_address)
         received_bc_reponse = False
         received_opponent_guess = False
         guess_counter += 1
     else:
-        server.handle_request()
+        try:
+            server.handle_request()
+        except WinException:
+            sys.exit()

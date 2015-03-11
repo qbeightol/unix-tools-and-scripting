@@ -11,11 +11,7 @@ synopsis=$(curl $url 2> /dev/null | grep -o $description_html | sed "s/<descript
 IFS=$'\n'
 array=($synopsis)
 read -p "Choose a movie (1-10) > " mov_num
-  while true
-  do 
-  printf "Movie $mov_num\nSynopsis\n\n"
-  echo ${array[$mov_num]}
-  read -p "Please enter to return"
-  break;
-  done
+printf "Movie $mov_num\nSynopsis\n\n"
+echo ${array[$mov_num]}
+read -p "Please enter to return"
 done
